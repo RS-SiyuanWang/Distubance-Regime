@@ -3,7 +3,7 @@ Codes and data for peer review process, including how to generate the disturbanc
 
 Contents of folders:
 
-- Raw Codes: the workflow to generate disturbance cubes and carbon dynamic simulation models.
+- Raw Codes: the workflow of generate disturbance cubes and carbon dynamic simulation model.
 
 - Derived data: the statistics from the simulated biomass data.
 
