@@ -1,7 +1,7 @@
 
 % DisturbanceRegimeParameters : mu, alpha, Iz(currently only slope);
 % Biomass Statistics: mean, median, range, skewness, kurtosis.
-function Calculate_Stats(mu,alpha,beta,GPP_index)
+function Calculate_Stats(mu,alpha,beta,GPP_index,Lb)
     %mu= [0.01:0.005:0.05];
     %alpha = [1.0:0.05:1.8];
     %beta = [0.03:0.01:0.09 0.1:0.05:0.25 0.3:0.1:0.5];
@@ -21,21 +21,26 @@ function Calculate_Stats(mu,alpha,beta,GPP_index)
     b  = max(normrnd(GPP_index,GPP_index./4,arrsize),1E-3);  %GPP index:[0.05:0.01:0.15]
     %b   = 0.1.*ones(arrsize);
     e   = 500.*ones(arrsize);%fixed scale
-    k   = max(normrnd(0.05,0.05./4,arrsize),1E-3);
+    k   = max(normrnd(Lb, Lb./4,arrsize),1E-3);
     c0  = 10.*ones(arrsize);
 
     %outdirs and outnames 
-    cvegdir = '/Net/Groups/BGI/scratch/swang/Data/statistics/new/cveg/';
-    gppdir = '/Net/Groups/BGI/scratch/swang/Data/statistics/new/gpp/'; 
-    xlsdir = '/Net/Groups/BGI/scratch/swang/Data/statistics/new/xls/';
+    %cvegdir = '/Net/Groups/BGI/scratch/swang/Data/Paper2/Statistics/cveg/';
+    %gppdir = '/Net/Groups/BGI/scratch/swang/Data/Paper2/Statistics/gpp/'; 
+    xlsdir = sprintf('./xls/k_%.3f/', Lb);
+    
+    if ~exist(xlsdir,'dir')
+        mkdir(xlsdir)
+    end
+
     %cveg
-    out_cvegname = sprintf('cVegFin_%dx%d_Mu_%.3f_Alpha_%.3f_Beta_%.3f_G_%.2f.mat',X,Y,mu,alpha,beta,GPP_index);
-    out_cvegfullname = fullfile(cvegdir,out_cvegname);
-    %gpp
-    out_gppname = sprintf('GPP_%dx%d_Mu_%.3f_Alpha_%.3f_Beta_%.3f_G_%.2f.mat',X,Y,mu,alpha,beta,GPP_index);
-    out_gppfullname = fullfile(gppdir,out_gppname);
+    % out_cvegname = sprintf('cVegFin_%dx%d_Mu_%.3f_Alpha_%.3f_Beta_%.3f_G_%.2f.mat',X,Y,mu,alpha,beta,GPP_index);
+    % out_cvegfullname = fullfile(cvegdir,out_cvegname);
+    % %gpp
+    % out_gppname = sprintf('GPP_%dx%d_Mu_%.3f_Alpha_%.3f_Beta_%.3f_G_%.2f.mat',X,Y,mu,alpha,beta,GPP_index);
+    % out_gppfullname = fullfile(gppdir,out_gppname);
     %xls
-    xlsname = sprintf('xls_%dx%d_Mu_%.3f_Alpha_%.3f_Beta_%.3f_G_%.2f__all_statistics.xls',X,Y,mu,alpha,beta,GPP_index);
+    xlsname = sprintf('xls_%dx%d_Mu_%.3f_Alpha_%.3f_Beta_%.3f_G_%.2f_K_%.2f_all_statistics.xls',X,Y,mu,alpha,beta,GPP_index,Lb);
     xlsfile = fullfile(xlsdir,xlsname);
 
     if exist(xlsfile, 'file') == 2
@@ -186,13 +191,13 @@ function Calculate_Stats(mu,alpha,beta,GPP_index)
 
         %flag
         time2 = string(datetime('now'));
-        flag = sprintf('mu_%.3f_a_%.3f_Beta_%.3f_GPP_%.2f are done at %s',mu,alpha,beta,GPP_index,time2);
+        lag = sprintf('mu_%.3f_a_%.3f_Beta_%.3f_GPP_%.2f_k_%.2f_are done at %s',mu,alpha,beta,GPP_index,Lb,time2);
         disp(flag)
         
         %save gpp info file
-        save(out_gppfullname,'gpp_curves','gppFins')
+        %save(out_gppfullname,'gpp_curves','gppFins')
         %save BioFin info file 
-        save(out_cvegfullname,'BioFins')
+        %save(out_cvegfullname,'BioFins')
         %save xls
         T = table(T_mu',T_Is',T_alpha',T_mean',T_median',T_range',T_var',T_std',T_cv',T_skew',T_kurt',T_prc25',T_prc75',T_Trimean',T_shannon',T_entropy',T_Contrast',T_Correlation',T_Energy',T_Homogeneity',T_shuffle_index',T_G',T_GPP');
         T.Properties.VariableNames = {'mu','beta','alpha','mean_bio','median_bio','range_bio','var_bio','std_bio','cv_bio','skew_bio','kurt_bio','prc25_bio','prc75_bio','Trimean','shannon','entropy','contrast','correlation','energy','homogeneity','Shuffle_index','G','GPP'};

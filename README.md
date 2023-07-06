@@ -5,6 +5,4 @@ Contents of folders:
 
 - Raw Codes: the workflow of generate disturbance cubes and carbon dynamic simulation model.
 
-- Derived data: the statistics from the simulated biomass data.
-
 - Analysis: the scipts to draw the figures in the manuscript.
